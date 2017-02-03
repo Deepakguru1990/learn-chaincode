@@ -39,13 +39,17 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 1")
+    if len(args) != 4 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 4")
     }
 
-    err := stub.PutState("hello_world", []byte(args[0]))
+    err := stub.PutState("Deepak", []byte(args[0]))
     if err != nil {
         return nil, err
+	}	
+	error := stub.PutState("Mayur", []byte(args[2]))
+    if err != nil {
+        return nil, error
     }
 
     return nil, nil
@@ -71,8 +75,8 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     var err error
     fmt.Println("running write()")
 
-    if len(args) != 2 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
+    if len(args) != 4 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 4. name of the variable and value to set")
     }
 
     name = args[0]                            //rename for fun
@@ -81,9 +85,15 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     if err != nil {
         return nil, err
     }
+
+    name = args[2]                            //rename for fun
+    value = args[3]
+    err = stub.PutState(name, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+        return nil, err
+    }
     return nil, nil
 }
-
 // Query is our entry point for queries
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
     fmt.Println("query is running " + function)
@@ -101,16 +111,25 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
     var name, jsonResp string
     var err error
 
-    if len(args) != 1 {
+    if len(args) != 2 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the var to query")
     }
 
     name = args[0]
-    valAsbytes, err := stub.GetState(name)
+    valAsbytesa, err := stub.GetState(name)
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
         return nil, errors.New(jsonResp)
     }
 
-    return valAsbytes, nil
+    return valAsbytesa, nil
+	
+	    name = args[2]
+    valAsbytesb, err := stub.GetState(name)
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+
+    return valAsbytesb, nil
 }
