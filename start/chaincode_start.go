@@ -1,9 +1,12 @@
 /*
 Copyright IBM Corp 2016 All Rights Reserved.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
+
 		 http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,17 +39,13 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-    if len(args) != 2 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2")
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 1")
     }
 
-    err := stub.PutState("Deepak", []byte(args[0]))
+    err := stub.PutState("hello_world", []byte(args[0]))
     if err != nil {
         return nil, err
-	}	
-	error := stub.PutState("Mayur", []byte(args[1]))
-    if err != nil {
-        return nil, error
     }
 
     return nil, nil
@@ -72,8 +71,8 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     var err error
     fmt.Println("running write()")
 
-    if len(args) != 4 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 4. name of the variable and value to set")
+    if len(args) != 2 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
     }
 
     name = args[0]                            //rename for fun
@@ -82,15 +81,9 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     if err != nil {
         return nil, err
     }
-
-    name = args[2]                            //rename for fun
-    value = args[3]
-    err = stub.PutState(name, []byte(value))  //write the variable into the chaincode state
-    if err != nil {
-        return nil, err
-    }
     return nil, nil
 }
+
 // Query is our entry point for queries
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
     fmt.Println("query is running " + function)
