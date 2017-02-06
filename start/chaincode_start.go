@@ -1,12 +1,9 @@
 /*
 Copyright IBM Corp 2016 All Rights Reserved.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
 		 http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,15 +36,15 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-    if len(args) != 4 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 4")
+    if len(args) != 2 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2")
     }
 
     err := stub.PutState("Deepak", []byte(args[0]))
     if err != nil {
         return nil, err
 	}	
-	error := stub.PutState("Mayur", []byte(args[2]))
+	error := stub.PutState("Mayur", []byte(args[1]))
     if err != nil {
         return nil, error
     }
@@ -111,25 +108,16 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
     var name, jsonResp string
     var err error
 
-    if len(args) != 2 {
+    if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the var to query")
     }
 
     name = args[0]
-    valAsbytesa, err := stub.GetState(name)
+    valAsbytes, err := stub.GetState(name)
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
         return nil, errors.New(jsonResp)
     }
 
-    return valAsbytesa, nil
-	
-	    name = args[2]
-    valAsbytesb, err := stub.GetState(name)
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
-        return nil, errors.New(jsonResp)
-    }
-
-    return valAsbytesb, nil
+    return valAsbytes, nil
 }
